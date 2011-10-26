@@ -5,6 +5,9 @@ module Mys3ql
 
     def initialize
       @config = YAML.load_file config_file
+    rescue Errno::ENOENT
+      $stderr.puts "missing ~/.mys3ql config file"
+      exit 1
     end
 
     #

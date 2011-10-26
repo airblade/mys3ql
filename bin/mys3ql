@@ -5,4 +5,4 @@ $LOAD_PATH.unshift lib_dir if File.directory?(lib_dir)
 
 require 'mys3ql'
 
-Mys3ql.run ARGV
+Mys3ql::Conductor.run ARGV

@@ -6,3 +6,4 @@ mys3ql = mysql + s3
 
 - restore (pull latest dump, pull bin files, pipe dump into mysql, pipe binfiles into mysql)
 - remove old dump files (s3)
+- fix verbosity/debugging flag
