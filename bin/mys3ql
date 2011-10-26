@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby-local-exec
+
+lib_dir = File.join(File.dirname(__FILE__), '..', 'lib')
+$LOAD_PATH.unshift lib_dir if File.directory?(lib_dir)
+
+require 'mys3ql'
+
+Mys3ql.run ARGV
