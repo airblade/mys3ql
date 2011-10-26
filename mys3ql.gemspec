@@ -7,9 +7,9 @@ Gem::Specification.new do |s|
   s.version     = Mys3ql::VERSION
   s.authors     = ["Andy Stewart"]
   s.email       = ["boss@airbladesoftware.com"]
-  s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.homepage    = 'https://github.com/airblade/mys3ql'
+  s.summary     = 'Simple backup of your MySql database onto Amazon S3.'
+  s.description = s.summary
 
   s.rubyforge_project = "mys3ql"
 
