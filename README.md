@@ -21,7 +21,7 @@ If you are using MySql's binary logging (see below), back up the binary logs lik
 First install the gem:
 
     $ gem install mys3ql
-    
+
 Second, create your `~/.mys3ql` config file:
 
     mysql:
@@ -65,6 +65,7 @@ Marc-André Cournoyer's [mysql_s3_backup](https://github.com/macournoyer/mysql_s
 ## To Do
 
 - tests ;)
+- allow more than config file per user
 - restore (pull latest dump, pull bin files, pipe dump into mysql, pipe binfiles into mysql)
 - remove old dump files (s3)
 - fix verbosity/debugging flag
