@@ -69,3 +69,15 @@ Marc-André Cournoyer's [mysql_s3_backup](https://github.com/macournoyer/mysql_s
 - restore (pull latest dump, pull bin files, pipe dump into mysql, pipe binfiles into mysql)
 - remove old dump files (s3)
 - fix verbosity/debugging flag
+
+
+## Questions, Problems, Feedback
+
+Please use the GitHub [issue tracker](https://github.com/airblade/mys3ql/issues) or email me.
+
+
+## Intellectual property
+
+Copyright 2011 Andy Stewart (boss@airbladesoftware.com).
+
+Released under the MIT licence.
