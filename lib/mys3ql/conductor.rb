@@ -37,8 +37,8 @@ module Mys3ql
     def self.usage
       <<END
 usage:
-  mys3ql full    - full backup, push to S3
-  mys3ql inc     - push bin logs to S3
+  mys3ql full            - full backup, push to S3
+  mys3ql incremental     - push bin logs to S3
 END
     end
 
