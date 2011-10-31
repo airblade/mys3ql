@@ -3,10 +3,11 @@ require 'yaml'
 module Mys3ql
   class Config
 
-    def initialize
-      @config = YAML.load_file config_file
+    def initialize(config_file = nil)
+      config_file = config_file || default_config_file
+      @config = YAML.load_file File.expand_path(config_file)
     rescue Errno::ENOENT
-      $stderr.puts "missing ~/.mys3ql config file"
+      $stderr.puts "missing config file #{config_file}"
       exit 1
     end
 
@@ -72,7 +73,7 @@ module Mys3ql
       @config['s3']
     end
 
-    def config_file
+    def default_config_file
       File.join "#{ENV['HOME']}", '.mys3ql'
     end
   end

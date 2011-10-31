@@ -23,6 +23,13 @@ Choice.options do
     desc "Push mysql's bin logs to S3"
   end
 
+  option :config do
+    short '-c'
+    long '--config=FILE'
+    desc 'Load configuration from YAML file (default: ~/.mys3ql)'
+    default '~/.mys3ql'
+  end
+
   separator ''
   separator 'General options:'
 

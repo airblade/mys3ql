@@ -9,11 +9,17 @@ Install and configure as below.
 
 To perform a full backup:
 
-    $ mys3ql full
+    $ mys3ql -f
+    $ mys3ql --full
 
 If you are using MySql's binary logging (see below), back up the binary logs like this:
 
-    $ mys3ql incremental
+    $ mys3ql -i
+    $ mys3ql --incremental
+
+By default mys3ql looks for a configuration file at ~/.mys3ql.  You can override this like so:
+
+    $ mys3ql -f --config=FILE
 
 
 ## Installation
@@ -22,7 +28,7 @@ First install the gem:
 
     $ gem install mys3ql
 
-Second, create your `~/.mys3ql` config file:
+Second, create your config file:
 
     mysql:
       # Database to back up
@@ -44,6 +50,7 @@ Second, create your `~/.mys3ql` config file:
       # Bucket in which to store your backups
       bucket: db_backups
 
+If you only have one database to back up on your server, you can put the config file at `~/.mys3ql`.  Otherwise, tell the `mys3ql` command where the config file is with the `--config=FILE` switch.
 
 ## Binary logging
 
@@ -65,7 +72,6 @@ Marc-André Cournoyer's [mysql_s3_backup](https://github.com/macournoyer/mysql_s
 ## To Do
 
 - tests ;)
-- allow more than config file per user
 - restore (pull latest dump, pull bin files, pipe dump into mysql, pipe binfiles into mysql)
 - remove old dump files (s3)
 

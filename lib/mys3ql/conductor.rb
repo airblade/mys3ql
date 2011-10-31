@@ -6,7 +6,7 @@ module Mys3ql
   class Conductor
 
     def self.run(options)
-      conductor = Conductor.new
+      conductor = Conductor.new(options['config'])
       conductor.debug = options[:debug]
 
       if options['full']
@@ -16,8 +16,8 @@ module Mys3ql
       end
     end
 
-    def initialize
-      @config = Config.new
+    def initialize(config_file = nil)
+      @config = Config.new(config_file)
       @mysql = Mysql.new @config
       @s3 = S3.new @config
     end
