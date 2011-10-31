@@ -34,7 +34,7 @@ Second, create your config file:
       # Database to back up
       database: aircms_production
       # MySql credentials
-      user: root
+      user:
       password:
       # Path (with trailing slash) to mysql commands e.g. mysqldump
       bin_path: /usr/local/mysql/bin/
