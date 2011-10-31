@@ -11,11 +11,7 @@ module Mys3ql
     end
 
     def log(message)
-      puts message if debugging?
-    end
-
-    def debugging?
-      true
+      puts message if @config.debugging?
     end
 
   end

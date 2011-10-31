@@ -68,7 +68,6 @@ Marc-André Cournoyer's [mysql_s3_backup](https://github.com/macournoyer/mysql_s
 - allow more than config file per user
 - restore (pull latest dump, pull bin files, pipe dump into mysql, pipe binfiles into mysql)
 - remove old dump files (s3)
-- fix verbosity/debugging flag
 
 
 ## Questions, Problems, Feedback

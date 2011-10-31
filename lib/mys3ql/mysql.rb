@@ -19,7 +19,7 @@ module Mys3ql
 
     def clean_up_dump
       File.delete dump_file
-      debug "deleted #{dump_file}"
+      log "deleted #{dump_file}"
     end
 
     def dump_file

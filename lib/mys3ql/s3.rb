@@ -15,7 +15,7 @@ module Mys3ql
       s3_file  = push_to_s3 dump_file, key
       if s3_file
         s3_file.copy @config.bucket, copy_key
-        debug "copied #{key} to #{copy_key}"
+        log "copied #{key} to #{copy_key}"
       end
     end
 
@@ -32,7 +32,7 @@ module Mys3ql
     def delete_bin_logs_on_s3
       bucket.files.all(:prefix => "#{bin_logs_prefix}").each do |file|
         file.destroy
-        debug "destroyed #{file.key}"
+        log "destroyed #{file.key}"
       end
     end
 
@@ -45,7 +45,7 @@ module Mys3ql
           :aws_secret_access_key => @config.secret_access_key,
           :aws_access_key_id     => @config.access_key_id
         )
-        debug 'connected to s3'
+        log 'connected to s3'
         s
       end
     end
@@ -53,7 +53,7 @@ module Mys3ql
     def bucket
       @directory ||= begin
         d = s3.directories.get @config.bucket  # assume bucket exists
-        debug "opened bucket #{@config.bucket}"
+        log "opened bucket #{@config.bucket}"
         d
       end
     end
@@ -66,7 +66,7 @@ module Mys3ql
           :body   => File.open(local_file_name),
           :public => false
         )
-        debug "pushed #{local_file_name} to #{s3_key}"
+        log "pushed #{local_file_name} to #{s3_key}"
         s3_file
       end
     end

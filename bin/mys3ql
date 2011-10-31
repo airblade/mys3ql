@@ -4,5 +4,49 @@ lib_dir = File.join(File.dirname(__FILE__), '..', 'lib')
 $LOAD_PATH.unshift lib_dir if File.directory?(lib_dir)
 
 require 'mys3ql'
+require 'choice'
 
-Mys3ql::Conductor.run ARGV
+Choice.options do
+
+  header ''
+  header 'Specific options:'
+
+  option :full do
+    short '-f'
+    long '--full'
+    desc 'Dump database, push to S3, and clean up bin logs on S3'
+  end
+
+  option :incremental do
+    short '-i'
+    long '--incremental'
+    desc "Push mysql's bin logs to S3"
+  end
+
+  separator ''
+  separator 'General options:'
+
+  option :debug do
+    short '-d'
+    long '--debug'
+    desc 'Turn on debugging mode'
+  end
+
+  option :help do
+    long '--help'
+    desc 'Show this message'
+  end
+
+  option :version do
+    short '-v'
+    long '--version'
+    desc 'Show version'
+    action do
+      puts "mys3ql v#{Mys3ql::VERSION}"
+      exit
+    end
+  end
+
+end
+
+Mys3ql::Conductor.run Choice.choices

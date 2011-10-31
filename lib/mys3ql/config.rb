@@ -11,6 +11,18 @@ module Mys3ql
     end
 
     #
+    # General
+    #
+
+    def debug=(val)
+      @debug = val
+    end
+
+    def debugging?
+      @debug
+    end
+
+    #
     # MySQL
     #
 

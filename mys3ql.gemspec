@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
+  s.add_dependency 'choice', '~> 0.1.4'
   s.add_dependency 'fog', '~> 1.0.0'
   s.add_development_dependency 'rake'
 end
