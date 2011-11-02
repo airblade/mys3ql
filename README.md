@@ -32,7 +32,7 @@ Second, create your config file:
 
     mysql:
       # Database to back up
-      database: aircms_production
+      database:
       # MySql credentials
       user:
       password:
@@ -41,7 +41,7 @@ Second, create your config file:
       # If you are using MySql binary logging:
       # Path to the binary logs, should match the bin_log option in your my.cnf.
       # Comment out if you are not using mysql binary logging
-      bin_log: /Users/andy/Desktop/mysql-bin
+      bin_log: /var/lib/mysql/binlog/mysql-bin
 
     s3:
       # S3 credentials
@@ -62,6 +62,9 @@ The MySQL user needs to have the RELOAD and the SUPER privileges, these can be g
 
     GRANT RELOAD ON *.* TO 'user_name'@'%' IDENTIFIED BY 'password';
     GRANT SUPER ON *.* TO 'user_name'@'%' IDENTIFIED BY 'password';
+
+
+N.B. the binary logs contain updates to all the databases on the server.  This means you can only switch on incremental backups for one database per server, because the logs will be purged each time a database is dumped.
 
 
 ## Inspiration
