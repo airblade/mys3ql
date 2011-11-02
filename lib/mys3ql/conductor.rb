@@ -30,7 +30,9 @@ module Mys3ql
     end
 
     def incremental
-      @s3.push_bin_logs_to_s3
+      @mysql.each_bin_log do |log|
+        @s3.push_bin_log_to_s3 log
+      end
     end
 
     def debug=(val)

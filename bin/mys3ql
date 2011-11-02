@@ -1,9 +1,5 @@
 #!/usr/bin/env ruby-local-exec
 
-# Hmm, is there a better way which doesn't force rubygems?
-require 'rubygems'
-require 'bundler/setup'
-
 lib_dir = File.join(File.dirname(__FILE__), '..', 'lib')
 $LOAD_PATH.unshift lib_dir if File.directory?(lib_dir)
 

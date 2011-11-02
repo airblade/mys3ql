@@ -19,14 +19,10 @@ module Mys3ql
       end
     end
 
-    def push_bin_logs_to_s3
-      if bin_logs_exist?
-        Dir["#{@config.bin_log}/*"].each do |file|
-          name = File.basename file
-          key = "#{bin_logs_prefix}/#{name}"
-          push_to_s3 file, key
-        end
-      end
+    def push_bin_log_to_s3(file)
+      name = File.basename file
+      key = "#{bin_logs_prefix}/#{name}"
+      push_to_s3 file, key
     end
 
     def delete_bin_logs_on_s3

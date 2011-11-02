@@ -9,12 +9,22 @@ module Mys3ql
     end
 
     def dump
-      cmd  = "#{@config.bin_path}mysqldump -u'#{@config.user}'"
-      cmd += " -p'#{@config.password}'" if @config.password
+      cmd  = "#{@config.bin_path}mysqldump"
       cmd += " --quick --single-transaction --create-options"
       cmd += ' --flush-logs --master-data=2 --delete-master-logs' if binary_logging?
-      cmd += " #{@config.database} | gzip > #{dump_file}"
-      execute cmd
+      cmd += cli_options
+      cmd += " | gzip > #{dump_file}"
+      run cmd
+    end
+
+    def each_bin_log
+      execute "flush logs"
+      logs = Dir.glob("#{@config.bin_log}.[0-9]*").sort
+      logs_to_backup = logs[0..-2]  # all logs except the last
+      logs_to_backup.each do |log|
+        yield log
+      end
+      execute "purge master logs to '#{File.basename(logs[-1])}'"
     end
 
     def clean_up_dump
@@ -34,6 +44,16 @@ module Mys3ql
 
     def binary_logging?
       @config.bin_log && @config.bin_log.length > 0
+    end
+
+    def cli_options
+      cmd  = " -u'#{@config.user}'"
+      cmd += " -p'#{@config.password}'" if @config.password
+      cmd += " #{@config.database}"
+    end
+
+    def execute(sql)
+      run %Q(#{@config.bin_path}mysql -e "#{sql}" #{cli_options})
     end
 
   end

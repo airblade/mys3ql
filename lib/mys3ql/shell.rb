@@ -2,7 +2,7 @@ module Mys3ql
   class ShellCommandError < RuntimeError ; end
 
   module Shell
-    def execute(command)
+    def run(command)
       log command
       result = `#{command}`
       log "==> #{result}"
