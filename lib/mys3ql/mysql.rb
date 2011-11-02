@@ -17,14 +17,15 @@ module Mys3ql
       run cmd
     end
 
+    # flushes logs, loops over each one yielding it to the block
     def each_bin_log
       execute "flush logs"
       logs = Dir.glob("#{@config.bin_log}.[0-9]*").sort
-      logs_to_backup = logs[0..-2]  # all logs except the last
+      logs_to_backup = logs #logs[0..-2]  # all logs except the last
       logs_to_backup.each do |log|
         yield log
       end
-      execute "purge master logs to '#{File.basename(logs[-1])}'"
+      #execute "purge master logs to '#{File.basename(logs[-1])}'"
     end
 
     def clean_up_dump
