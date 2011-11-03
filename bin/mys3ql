@@ -26,10 +26,10 @@ Main do
   option 'version', 'v'
 
   def run
-    if params[:version]
+    if params[:version].given?
       puts "mys3ql v#{Mys3ql::VERSION}"
       exit
     end
-    Mys3ql::Conductor.run params[:command].value, params[:config].value, params[:debug].value
+    Mys3ql::Conductor.run params[:command].value, params[:config].value, params[:debug].given?
   end
 end
