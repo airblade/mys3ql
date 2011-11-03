@@ -9,17 +9,19 @@ Install and configure as below.
 
 To perform a full backup:
 
-    $ mys3ql -f
-    $ mys3ql --full
+    $ mys3ql full
 
 If you are using MySql's binary logging (see below), back up the binary logs like this:
 
-    $ mys3ql -i
-    $ mys3ql --incremental
+    $ mys3ql incremental
+
+To restore from the latest backup (plus binlogs if present):
+
+    $ mys3ql restore
 
 By default mys3ql looks for a configuration file at ~/.mys3ql.  You can override this like so:
 
-    $ mys3ql -f --config=FILE
+    $ mys3ql [command] --config=FILE
 
 
 ## Installation
