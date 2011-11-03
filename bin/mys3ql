@@ -23,6 +23,13 @@ Choice.options do
     desc "Push mysql's bin logs to S3"
   end
 
+  # Assume 'latest' for now.
+  option :restore do
+    short '-r'
+    long '--restore'
+    desc 'Restore local database from S3.'
+  end
+
   option :config do
     short '-c'
     long '--config=FILE'

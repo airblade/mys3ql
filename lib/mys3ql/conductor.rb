@@ -1,3 +1,4 @@
+require 'tempfile'
 require 'mys3ql/config'
 require 'mys3ql/mysql'
 require 'mys3ql/s3'
@@ -13,6 +14,8 @@ module Mys3ql
         conductor.full
       elsif options['incremental']
         conductor.incremental
+      elsif options['restore']
+        conductor.restore
       end
     end
 
@@ -24,19 +27,46 @@ module Mys3ql
 
     def full
       @mysql.dump
-      @s3.push_dump_to_s3 @mysql.dump_file
-      @mysql.clean_up_dump
-      @s3.delete_bin_logs_on_s3
+      @s3.store @mysql.dump_file
+      @mysql.delete_dump
+      @s3.delete_bin_logs
     end
 
     def incremental
       @mysql.each_bin_log do |log|
-        @s3.push_bin_log_to_s3 log
+        @s3.store log, false
+      end
+    end
+
+    # for now only restore from latest
+    def restore
+      # get latest dump
+      with_temp_file do |file|
+        @s3.retrieve :latest, file
+        @mysql.restore file
+      end
+
+      # apply subsequent bin logs
+      @s3.each_bin_log do |log|
+        with_temp_file do |file|
+          @s3.retrieve log, file
+          @mysql.apply_bin_log file
+        end
       end
     end
 
     def debug=(val)
       @config.debug = val
+    end
+
+    private
+
+    def with_temp_file(&block)
+      file = Tempfile.new 'mys3ql-sql'
+      yield file.path
+      nil
+    ensure
+      file.close!
     end
   end
 end

@@ -8,33 +8,56 @@ module Mys3ql
       @config = config
     end
 
+    #
+    # dump
+    #
+
     def dump
       cmd  = "#{@config.bin_path}mysqldump"
-      cmd += " --quick --single-transaction --create-options"
+      cmd += ' --quick --single-transaction --create-options'
       cmd += ' --flush-logs --master-data=2 --delete-master-logs' if binary_logging?
       cmd += cli_options
       cmd += " | gzip > #{dump_file}"
       run cmd
     end
 
+    def dump_file
+      @dump_file ||= "#{timestamp}.sql.gz"
+    end
+
+    def delete_dump
+      File.delete dump_file
+      log "mysql: deleted #{dump_file}"
+    end
+
+    #
+    # bin_logs
+    #
+
     # flushes logs, loops over each one yielding it to the block
-    def each_bin_log
-      execute "flush logs"
+    def each_bin_log(&block)
+      execute 'flush logs'
       logs = Dir.glob("#{@config.bin_log}.[0-9]*").sort
       logs_to_backup = logs #logs[0..-2]  # all logs except the last
-      logs_to_backup.each do |log|
-        yield log
+      logs_to_backup.each do |log_file|
+        yield log_file
       end
       #execute "purge master logs to '#{File.basename(logs[-1])}'"
     end
 
-    def clean_up_dump
-      File.delete dump_file
-      log "deleted #{dump_file}"
+    #
+    # restore
+    #
+
+    def restore(file)
+      run "gunzip -c #{file} | #{@config.bin_path}mysql #{cli_options}"
     end
 
-    def dump_file
-      @dump_file ||= "#{timestamp}.sql.gz"
+    def apply_bin_log(file)
+      cmd  = "#{@config.bin_path}mysqlbinlog --database=#{@config.database} #{file}"
+      cmd += " | #{@config.bin_path}mysql -u'#{@config.user}'"
+      cmd += " -p'#{@config.password}'" if @config.password
+      run cmd
     end
 
     private

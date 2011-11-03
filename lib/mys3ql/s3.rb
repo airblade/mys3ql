@@ -9,30 +9,65 @@ module Mys3ql
       @config = config
     end
 
-    def push_dump_to_s3(dump_file)
-      key      = "#{dumps_prefix}/#{dump_file}"
-      copy_key = "#{dumps_prefix}/latest.sql.gz"
-      s3_file  = push_to_s3 dump_file, key
-      if s3_file
+    def store(file, dump = true)
+      key = key_for(dump ? :dump : :bin_log, file)
+      s3_file = save file, key
+      if dump && s3_file
+        copy_key = key_for :latest
         s3_file.copy @config.bucket, copy_key
         log "copied #{key} to #{copy_key}"
       end
     end
 
-    def push_bin_log_to_s3(file)
-      name = File.basename file
-      key = "#{bin_logs_prefix}/#{name}"
-      push_to_s3 file, key
-    end
-
-    def delete_bin_logs_on_s3
-      bucket.files.all(:prefix => "#{bin_logs_prefix}").each do |file|
+    def delete_bin_logs
+      each_bin_log do |file|
         file.destroy
-        log "destroyed #{file.key}"
+        log "s3: destroyed #{file.key}"
       end
     end
 
+    def each_bin_log(&block)
+      bucket.files.all(:prefix => "#{bin_logs_prefix}").sort.each do |file|
+        yield file
+      end
+    end
+
+    def retrieve(s3_file, local_file)
+      key = (s3_file == :latest) ? key_for(:latest) : s3_file.key
+      get key, local_file
+    end
+
     private
+
+    def get(s3_key, local_file_name)
+      s3_file = bucket.files.get s3_key
+      File.open(local_file_name, 'wb') do |file|
+        file.write s3_file.body
+      end
+      log "s3: pulled #{s3_key} to #{local_file_name}"
+    end
+
+    # returns Fog::Storage::AWS::File if we pushed, nil otherwise.
+    def save(local_file_name, s3_key)
+      unless bucket.files.head(s3_key)
+        s3_file = bucket.files.create(
+          :key    => s3_key,
+          :body   => File.open(local_file_name),
+          :public => false
+        )
+        log "s3: pushed #{local_file_name} to #{s3_key}"
+        s3_file
+      end
+    end
+
+    def key_for(kind, file = nil)
+      name = File.basename file if file
+      case kind
+        when :dump;    "#{dumps_prefix}/#{name}"
+        when :bin_log; "#{bin_logs_prefix}/#{name}"
+        when :latest;  "#{dumps_prefix}/latest.sql.gz"
+      end
+    end
 
     def s3
       @s3 ||= begin
@@ -41,7 +76,7 @@ module Mys3ql
           :aws_secret_access_key => @config.secret_access_key,
           :aws_access_key_id     => @config.access_key_id
         )
-        log 'connected to s3'
+        log 's3: connected'
         s
       end
     end
@@ -49,21 +84,8 @@ module Mys3ql
     def bucket
       @directory ||= begin
         d = s3.directories.get @config.bucket  # assume bucket exists
-        log "opened bucket #{@config.bucket}"
+        log "s3: opened bucket #{@config.bucket}"
         d
-      end
-    end
-
-    # returns Fog::Storage::AWS::File if we pushed, nil otherwise.
-    def push_to_s3(local_file_name, s3_key)
-      unless bucket.files.head(s3_key)
-        s3_file = bucket.files.create(
-          :key    => s3_key,
-          :body   => File.open(local_file_name),
-          :public => false
-        )
-        log "pushed #{local_file_name} to #{s3_key}"
-        s3_file
       end
     end
 

@@ -75,8 +75,9 @@ Marc-André Cournoyer's [mysql_s3_backup](https://github.com/macournoyer/mysql_s
 ## To Do
 
 - tests ;)
-- restore (pull latest dump, pull bin files, pipe dump into mysql, pipe binfiles into mysql)
+- better command line handling: e.g. mys3ql full -d
 - remove old dump files (s3)
+- restore from non-latest dump
 
 
 ## Questions, Problems, Feedback
