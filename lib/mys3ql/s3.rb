@@ -84,7 +84,7 @@ module Mys3ql
     def bucket
       @directory ||= begin
         d = s3.directories.get @config.bucket
-        raise "S3 bucket #{@config.bucket} not found" unless d  # TODO: create bucket instead
+        raise "S3 bucket #{@config.bucket} not found" unless d  # create bucket instead?
         log "s3: opened bucket #{@config.bucket}"
         d
       end

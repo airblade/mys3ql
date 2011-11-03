@@ -34,7 +34,7 @@ module Mys3ql
     # bin_logs
     #
 
-    # flushes logs, loops over each one yielding it to the block
+    # flushes logs, yields each bar the last to the block
     def each_bin_log(&block)
       execute 'flush logs'
       logs = Dir.glob("#{@config.bin_log}.[0-9]*").sort_by { |f| f[/\d+/].to_i }
@@ -42,7 +42,8 @@ module Mys3ql
       logs_to_backup.each do |log_file|
         yield log_file
       end
-      execute "purge master logs to '#{File.basename(logs[-1])}'"
+      # delete binlogs from file system
+      #execute "purge master logs to '#{File.basename(logs[-1])}'"
     end
 
     #

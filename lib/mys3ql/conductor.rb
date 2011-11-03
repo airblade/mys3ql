@@ -53,6 +53,9 @@ module Mys3ql
           @mysql.apply_bin_log file
         end
       end
+
+      # NOTE: not sure about this:
+      puts "You might want to flush mysql's logs..."
     end
 
     def debug=(val)
