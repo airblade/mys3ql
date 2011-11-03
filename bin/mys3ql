@@ -10,7 +10,7 @@ Main do
   # consider using modes as/when we need command-specific arguments (e.g. restore specific backup)
   argument 'command' do
     validate { |command| %w[ full incremental restore ].include? command }
-    description 'full | incremental | restore'
+    description 'specifies the operation to perform [full | incremental | restore]'
   end
 
   option 'config', 'c' do
