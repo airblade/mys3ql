@@ -16,7 +16,7 @@ module Mys3ql
       if dump && s3_file
         copy_key = key_for :latest
         s3_file.copy @config.bucket, copy_key
-        log "copied #{key} to #{copy_key}"
+        log "s3: copied #{key} to #{copy_key}"
       end
     end
 
