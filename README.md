@@ -63,6 +63,7 @@ The MySQL user needs to have the RELOAD and the SUPER privileges, these can be g
     GRANT RELOAD ON *.* TO 'user_name'@'%' IDENTIFIED BY 'password';
     GRANT SUPER ON *.* TO 'user_name'@'%' IDENTIFIED BY 'password';
 
+You may need to run mys3ql's incremental backup with special permissions (sudo), depending on the ownership of the binlogs directory.
 
 N.B. the binary logs contain updates to all the databases on the server.  This means you can only switch on incremental backups for one database per server, because the logs will be purged each time a database is dumped.
 
