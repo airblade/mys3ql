@@ -7,6 +7,7 @@ module Mys3ql
 
     def initialize(config)
       @config = config
+      Fog::Logger[:warning] = nil
     end
 
     def store(file, dump = true)
