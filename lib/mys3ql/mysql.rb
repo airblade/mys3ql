@@ -38,11 +38,11 @@ module Mys3ql
     def each_bin_log(&block)
       execute 'flush logs'
       logs = Dir.glob("#{@config.bin_log}.[0-9]*").sort
-      logs_to_backup = logs #logs[0..-2]  # all logs except the last
+      logs_to_backup = logs[0..-2]  # all logs except the last, which is in use
       logs_to_backup.each do |log_file|
         yield log_file
       end
-      #execute "purge master logs to '#{File.basename(logs[-1])}'"
+      execute "purge master logs to '#{File.basename(logs[-1])}'"
     end
 
     #
