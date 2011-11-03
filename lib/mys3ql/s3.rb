@@ -27,7 +27,7 @@ module Mys3ql
     end
 
     def each_bin_log(&block)
-      bucket.files.all(:prefix => "#{bin_logs_prefix}").sort.each do |file|
+      bucket.files.all(:prefix => "#{bin_logs_prefix}").sort_by { |file| file.key[/\d+/].to_i }.each do |file|
         yield file
       end
     end

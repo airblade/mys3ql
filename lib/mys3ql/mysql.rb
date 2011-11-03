@@ -37,7 +37,7 @@ module Mys3ql
     # flushes logs, loops over each one yielding it to the block
     def each_bin_log(&block)
       execute 'flush logs'
-      logs = Dir.glob("#{@config.bin_log}.[0-9]*").sort
+      logs = Dir.glob("#{@config.bin_log}.[0-9]*").sort_by { |f| f[/\d+/].to_i }
       logs_to_backup = logs[0..-2]  # all logs except the last, which is in use
       logs_to_backup.each do |log_file|
         yield log_file
