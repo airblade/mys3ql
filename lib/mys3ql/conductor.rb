@@ -9,12 +9,7 @@ module Mys3ql
     def self.run(command, config, debug)
       conductor = Conductor.new(config)
       conductor.debug = debug
-
-      case command
-        when 'full';        conductor.full
-        when 'incremental'; conductor.incremental
-        when 'restore';     conductor.restore
-      end
+      conductor.send command
     end
 
     def initialize(config_file = nil)
