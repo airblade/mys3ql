@@ -6,16 +6,14 @@ require 'mys3ql/s3'
 module Mys3ql
   class Conductor
 
-    def self.run(options)
-      conductor = Conductor.new(options['config'])
-      conductor.debug = options[:debug]
+    def self.run(command, config, debug)
+      conductor = Conductor.new(config)
+      conductor.debug = debug
 
-      if options['full']
-        conductor.full
-      elsif options['incremental']
-        conductor.incremental
-      elsif options['restore']
-        conductor.restore
+      case command
+        when 'full';        conductor.full
+        when 'incremental'; conductor.incremental
+        when 'restore';     conductor.restore
       end
     end
 

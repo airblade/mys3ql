@@ -4,63 +4,32 @@ lib_dir = File.join(File.dirname(__FILE__), '..', 'lib')
 $LOAD_PATH.unshift lib_dir if File.directory?(lib_dir)
 
 require 'mys3ql'
-require 'choice'
+require 'main'
 
-Choice.options do
-
-  header ''
-  header 'Specific options:'
-
-  option :full do
-    short '-f'
-    long '--full'
-    desc 'Dump database, push to S3, and clean up bin logs on S3'
+Main do
+  # consider using modes as/when we need command-specific arguments (e.g. restore specific backup)
+  argument 'command' do
+    validate { |command| %w[ full incremental restore ].include? command }
+    description 'full | incremental | restore'
   end
 
-  option :incremental do
-    short '-i'
-    long '--incremental'
-    desc "Push mysql's bin logs to S3"
+  option 'config', 'c' do
+    argument :required
+    description 'load configuration from YAML file'
+    defaults '~/.mys3ql'
   end
 
-  # Assume 'latest' for now.
-  option :restore do
-    short '-r'
-    long '--restore'
-    desc 'Restore local database from S3.'
+  option 'debug', 'd' do
+    description 'be verbose'
   end
 
-  option :config do
-    short '-c'
-    long '--config=FILE'
-    desc 'Load configuration from YAML file (default: ~/.mys3ql)'
-    default '~/.mys3ql'
-  end
+  option 'version', 'v'
 
-  separator ''
-  separator 'General options:'
-
-  option :debug do
-    short '-d'
-    long '--debug'
-    desc 'Turn on debugging mode'
-  end
-
-  option :help do
-    long '--help'
-    desc 'Show this message'
-  end
-
-  option :version do
-    short '-v'
-    long '--version'
-    desc 'Show version'
-    action do
+  def run
+    if params[:version]
       puts "mys3ql v#{Mys3ql::VERSION}"
       exit
     end
+    Mys3ql::Conductor.run params[:command].value, params[:config].value, params[:debug].value
   end
-
 end
-
-Mys3ql::Conductor.run Choice.choices
