@@ -23,7 +23,7 @@ module Mys3ql
     def delete_bin_logs
       each_bin_log do |file|
         file.destroy
-        log "s3: destroyed #{file.key}"
+        log "s3: deleted #{file.key}"
       end
     end
 
