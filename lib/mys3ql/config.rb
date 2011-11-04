@@ -63,6 +63,10 @@ module Mys3ql
       s3['bucket']
     end
 
+    def region
+      s3['region']
+    end
+
     private
 
     def mysql

@@ -75,7 +75,8 @@ module Mys3ql
         s = Fog::Storage.new(
           :provider              => 'AWS',
           :aws_secret_access_key => @config.secret_access_key,
-          :aws_access_key_id     => @config.access_key_id
+          :aws_access_key_id     => @config.access_key_id,
+          :region                => @config.region
         )
         log 's3: connected'
         s
@@ -85,7 +86,7 @@ module Mys3ql
     def bucket
       @directory ||= begin
         d = s3.directories.get @config.bucket
-        raise "S3 bucket #{@config.bucket} not found" unless d  # create bucket instead?
+        raise "S3 bucket #{@config.bucket} not found" unless d  # create bucket instead (n.b. region/location)?
         log "s3: opened bucket #{@config.bucket}"
         d
       end

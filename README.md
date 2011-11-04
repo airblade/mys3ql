@@ -52,6 +52,9 @@ Second, create your config file:
       secret_access_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       # Bucket in which to store your backups
       bucket: db_backups
+      # AWS region your bucket lives in.
+      # (I suspect you only need to specify this when your 'location' is in a different region.)
+      #region: eu-west-1
 
 If you only have one database to back up on your server, you can put the config file at `~/.mys3ql`.  Otherwise, tell the `mys3ql` command where the config file is with the `--config=FILE` switch.
 
