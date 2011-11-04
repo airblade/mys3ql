@@ -5,7 +5,7 @@ module Mys3ql
     def run(command)
       log command
       result = `#{command}`
-      log "==> #{result}"
+      log "==> #{result}" unless result.empty?
       raise ShellCommandError, "error (exit status #{$?.exitstatus}): #{command} ==> #{result}: #{$?}" unless $?.success?
       result
     end
