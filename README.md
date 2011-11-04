@@ -1,6 +1,6 @@
 # mys3ql = mysql + s3
 
-Simple backup of your MySql database onto Amazon S3.
+Simple backup of your MySQL database onto Amazon S3.
 
 
 ## Quick start
@@ -19,8 +19,9 @@ To restore from the latest backup (plus binlogs if present):
 
     $ mys3ql restore
 
-By default mys3ql looks for a configuration file at ~/.mys3ql.  You can override this like so:
+By default mys3ql looks for a configuration file at `~/.mys3ql`.  You can override this like so:
 
+    $ mys3ql [command] -c FILE
     $ mys3ql [command] --config=FILE
 
 
@@ -56,16 +57,16 @@ If you only have one database to back up on your server, you can put the config 
 
 ## Binary logging
 
-To use incremental backups you need to enable binary logging by making sure that the MySQL config file (my.cnf) has the following line in it:
+To use incremental backups you need to enable binary logging by making sure that the MySQL config file (`/etc/my.cnf`) has the following line in it:
 
     log_bin = /var/db/mysql/binlog/mysql-bin
 
-The MySQL user needs to have the RELOAD and the SUPER privileges, these can be granted with the following SQL commands (which need to be executed as the MySQL root user):
+The MySQL user needs to have the RELOAD and the SUPER privileges.  These can be granted with the following SQL commands (which need to be executed as the MySQL root user):
 
     GRANT RELOAD ON *.* TO 'user_name'@'%' IDENTIFIED BY 'password';
     GRANT SUPER ON *.* TO 'user_name'@'%' IDENTIFIED BY 'password';
 
-You may need to run mys3ql's incremental backup with special permissions (sudo), depending on the ownership of the binlogs directory.
+You may need to run mys3ql's incremental backup with special permissions (sudo) depending on the ownership of the binlogs directory.
 
 N.B. the binary logs contain updates to all the databases on the server.  This means you can only switch on incremental backups for one database per server, because the logs will be purged each time a database is dumped.
 
@@ -79,7 +80,7 @@ Marc-André Cournoyer's [mysql_s3_backup](https://github.com/macournoyer/mysql_s
 
 - tests ;)
 - remove old dump files (s3)
-- restore from non-latest dump
+- (restore from non-latest dump)
 
 
 ## Questions, Problems, Feedback
