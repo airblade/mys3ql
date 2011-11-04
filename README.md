@@ -41,7 +41,7 @@ Second, create your config file:
       # Path (with trailing slash) to mysql commands e.g. mysqldump
       bin_path: /usr/local/mysql/bin/
       # If you are using MySql binary logging:
-      # Path to the binary logs, should match the bin_log option in your my.cnf.
+      # Path to the binary logs, should match the log_bin option in your my.cnf.
       # Comment out if you are not using mysql binary logging
       bin_log: /var/lib/mysql/binlog/mysql-bin
 
