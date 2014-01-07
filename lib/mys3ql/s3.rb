@@ -50,6 +50,7 @@ module Mys3ql
 
     # returns Fog::Storage::AWS::File if we pushed, nil otherwise.
     def save(local_file_name, s3_key)
+      s3.sync_clock
       unless bucket.files.head(s3_key)
         s3_file = bucket.files.create(
           :key    => s3_key,
