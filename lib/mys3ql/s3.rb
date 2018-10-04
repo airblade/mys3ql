@@ -55,6 +55,7 @@ module Mys3ql
         s3_file = bucket.files.create(
           :key    => s3_key,
           :body   => File.open(local_file_name),
+          :storage_class => 'STANDARD_IA',
           :public => false
         )
         log "s3: pushed #{local_file_name} to #{s3_key}"
