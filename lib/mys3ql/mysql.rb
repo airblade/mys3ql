@@ -14,7 +14,7 @@ module Mys3ql
 
     def dump
       cmd  = "#{@config.bin_path}mysqldump"
-      cmd += ' --quick --single-transaction --create-options'
+      cmd += ' --quick --single-transaction --create-options --no-tablespaces'
       cmd += ' --flush-logs --master-data=2 --delete-master-logs' if binary_logging?
       cmd += cli_options
       cmd += " | gzip > #{dump_file}"
