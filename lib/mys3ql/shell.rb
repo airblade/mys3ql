@@ -1,5 +1,5 @@
 module Mys3ql
-  class ShellCommandError < RuntimeError ; end
+  ShellCommandError = Class.new RuntimeError
 
   module Shell
     def run(command)
