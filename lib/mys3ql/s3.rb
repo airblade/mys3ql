@@ -1,5 +1,5 @@
 require 'mys3ql/shell'
-require 'fog'
+require 'awd-sdk-s3'
 
 module Mys3ql
   class S3
@@ -7,7 +7,6 @@ module Mys3ql
 
     def initialize(config)
       @config = config
-      Fog::Logger[:warning] = nil
     end
 
     def store(file, dump = true)
@@ -15,20 +14,22 @@ module Mys3ql
       s3_file = save file, key
       if dump && s3_file
         copy_key = key_for :latest
-        s3_file.copy @config.bucket, copy_key
+        s3_file.copy_to key: copy_key
         log "s3: copied #{key} to #{copy_key}"
       end
     end
 
     def delete_bin_logs
       each_bin_log do |file|
-        file.destroy
+        file.delete
         log "s3: deleted #{file.key}"
       end
     end
 
     def each_bin_log(&block)
-      bucket.files.all(:prefix => "#{bin_logs_prefix}").sort_by { |file| file.key[/\d+/].to_i }.each do |file|
+      bucket.objects(prefix: bin_logs_prefix)
+            .sort_by { |file| file.key[/\d+/].to_i }
+            .each do |file|
         yield file
       end
     end
@@ -41,26 +42,28 @@ module Mys3ql
     private
 
     def get(s3_key, local_file_name)
-      s3_file = bucket.files.get s3_key
-      File.open(local_file_name, 'wb') do |file|
-        file.write s3_file.body
-      end
+      s3.get_object(
+        response_target: local_file_name,
+        bucket:          @config.bucket,
+        key:             s3_key
+      )
       log "s3: pulled #{s3_key} to #{local_file_name}"
     end
 
-    # returns Fog::Storage::AWS::File if we pushed, nil otherwise.
     def save(local_file_name, s3_key)
-      s3.sync_clock
-      unless bucket.files.head(s3_key)
-        s3_file = bucket.files.create(
-          :key    => s3_key,
-          :body   => File.open(local_file_name),
-          :storage_class => 'STANDARD_IA',
-          :public => false
-        )
-        log "s3: pushed #{local_file_name} to #{s3_key}"
-        s3_file
+      if bucket.object(s3_key).exists?
+        log "s3: skipped #{local_file_name} - #{s3_key} exists"
+        return
       end
+
+      s3_file = bucket.put_object(
+        key:           s3_key,
+        body:          File.open(local_file_name),
+        storage_class: 'STANDARD_IA',
+        acl:           'private'
+      )
+      log "s3: pushed #{local_file_name} to #{s3_key}"
+      s3_file
     end
 
     def key_for(kind, file = nil)
@@ -74,23 +77,22 @@ module Mys3ql
 
     def s3
       @s3 ||= begin
-        s = Fog::Storage.new(
-          :provider              => 'AWS',
-          :aws_secret_access_key => @config.secret_access_key,
-          :aws_access_key_id     => @config.access_key_id,
-          :region                => @config.region
+        client = Aws::S3::Client.new(
+          secret_access_key: @config.secret_access_key,
+          access_key_id:     @config.access_key_id,
+          region:            @config.region
         )
         log 's3: connected'
-        s
+        client
       end
     end
 
     def bucket
-      @directory ||= begin
-        d = s3.directories.get @config.bucket
-        raise "S3 bucket #{@config.bucket} not found" unless d  # create bucket instead (n.b. region/location)?
+      @bucket ||= begin
+        b = Aws::S3::Bucket.new @config.bucket, client: s3
+        raise "S3 bucket #{@config.bucket} not found" unless b.exists?
         log "s3: opened bucket #{@config.bucket}"
-        d
+        b
       end
     end
 
@@ -105,6 +107,5 @@ module Mys3ql
     def bin_logs_exist?
       @config.bin_log && @config.bin_log.length > 0 && File.exist?(@config.bin_log)
     end
-
   end
 end
