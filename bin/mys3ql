@@ -6,16 +6,16 @@ require 'optparse'
 
 params = {}
 op = OptionParser.new do |opts|
-  opts.banner = 'Usage: mys3ql <full|incremental|restore> <[args]>'
+  opts.banner = 'Usage: mys3ql <full|incremental|restore> [<args>]'
 
-  opts.on '-c', '--config CONFIG', 'Load configuration from YAML file (default ~/.mys3ql)'
-  opts.on_tail '-d', '--debug', 'Be verbose'
+  opts.on('-c', '--config CONFIG', 'Load configuration from YAML file (default ~/.mys3ql)') { |v| params[:config] = v }
+  opts.on_tail('-d', '--debug', 'Be verbose') { |v| params[:debug] = v }
   opts.on_tail '-v', '--version', 'Print version' do
     puts "mys3ql v#{Mys3ql::VERSION}"
     exit
   end
 end
-op.parse!(into: params)
+op.parse! ARGV
 
 params[:command] = ARGV[0]
 unless %w[full incremental restore].include? params[:command]
