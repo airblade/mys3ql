@@ -60,8 +60,8 @@ module Mys3ql
       run "gunzip -c #{file} | #{@config.bin_path}mysql #{cli_options}"
     end
 
-    def apply_bin_log(file)
-      cmd  = "#{@config.bin_path}mysqlbinlog --database=#{@config.database} #{file}"
+    def apply_bin_logs(*files)
+      cmd  = "#{@config.bin_path}mysqlbinlog --database=#{@config.database} #{files.join ' '}"
       cmd += " | #{@config.bin_path}mysql -u'#{@config.user}'"
       cmd += " -p'#{@config.password}'" if @config.password
       run cmd

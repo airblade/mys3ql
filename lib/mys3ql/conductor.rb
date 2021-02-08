@@ -49,11 +49,16 @@ module Mys3ql
       end
 
       # apply subsequent bin logs
-      @s3.each_bin_log do |log|
-        with_temp_file do |file|
-          @s3.retrieve log, file
-          @mysql.apply_bin_log file
+      begin
+        tmpfiles = []
+        @s3.each_bin_log do |log|
+          file = Tempfile.new 'mys3ql'
+          tmpfiles << file
+          @s3.retrieve log, file.path
         end
+        @mysql.apply_bin_logs tmpfiles.map(&:path)
+      ensure
+        tmpfiles.each &:close!
       end
 
       # NOTE: not sure about this:
