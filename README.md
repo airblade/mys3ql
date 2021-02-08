@@ -21,6 +21,12 @@ To restore from the latest backup (plus binlogs if present):
 
     $ mys3ql restore
 
+To restore a recent subset of binlogs:
+
+    $ mys3ql restore --after NUMBER
+
+– where NUMBER is a 6-digit binlog file number.
+
 By default mys3ql looks for a configuration file at `~/.mys3ql`.  You can override this like so:
 
     $ mys3ql [command] -c FILE

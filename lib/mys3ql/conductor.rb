@@ -6,10 +6,16 @@ require 'mys3ql/s3'
 module Mys3ql
   class Conductor
 
-    def self.run(command, config, debug)
-      conductor = Conductor.new(config)
-      conductor.debug = debug
-      conductor.send command
+    def self.run(args)
+      conductor = Conductor.new args.fetch(:config, nil)
+      conductor.debug = args.fetch(:debug, false)
+
+      command = args.fetch(:command)
+      if command == 'restore'
+        conductor.restore args.fetch(:after, nil)
+      else
+        conductor.send command
+      end
     end
 
     def initialize(config_file = nil)
@@ -38,20 +44,29 @@ module Mys3ql
       end
     end
 
-    # Downloads the latest dump from S3 and loads it into the database.
-    # Downloads each binary log from S3 and loads it into the database.
+    # When 'after' is nil:
+    #
+    # - downloads the latest dump from S3 and loads it into the database;
+    # - downloads each binary log from S3 and loads it into the database.
+    #
+    # When 'after' is given:
+    #
+    # - downloads each binary log following 'after' from S3 and loads it into the database.
+    #
     # Downloaded files are removed from the file system.
-    def restore
-      # get latest dump
-      with_temp_file do |file|
-        @s3.retrieve :latest, file
-        @mysql.restore file
+    def restore(after = nil)
+      unless after
+        # get latest dump
+        with_temp_file do |file|
+          @s3.retrieve :latest, file
+          @mysql.restore file
+        end
       end
 
-      # apply subsequent bin logs
+      # apply bin logs
       begin
         tmpfiles = []
-        @s3.each_bin_log do |log|
+        @s3.each_bin_log(after) do |log|
           file = Tempfile.new 'mys3ql'
           tmpfiles << file
           @s3.retrieve log, file.path

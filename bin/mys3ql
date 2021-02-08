@@ -6,14 +6,21 @@ require 'optparse'
 
 params = {}
 op = OptionParser.new do |opts|
-  opts.banner = 'Usage: mys3ql <full|incremental|restore> [<args>]'
+  opts.banner = 'Usage: mys3ql <full|incremental|restore> [<options>]'
+
+  opts.separator ''
+  opts.separator 'Common options:'
 
   opts.on('-c', '--config CONFIG', 'Load configuration from YAML file (default ~/.mys3ql)') { |v| params[:config] = v }
-  opts.on_tail('-d', '--debug', 'Be verbose') { |v| params[:debug] = v }
-  opts.on_tail '-v', '--version', 'Print version' do
+  opts.on('-d', '--debug', 'Be verbose') { |v| params[:debug] = v }
+  opts.on '-v', '--version', 'Print version' do
     puts "mys3ql v#{Mys3ql::VERSION}"
     exit
   end
+
+  opts.separator ''
+  opts.separator 'restore options:'
+  opts.on('-a', '--after NUMBER', 'Use only the subset of binary logs after NUMBER') { |v| params[:after] = v }
 end
 op.parse! ARGV
 
@@ -23,4 +30,4 @@ unless %w[full incremental restore].include? params[:command]
   exit 1
 end
 
-Mys3ql::Conductor.run params[:command], params[:config], params[:debug]
+Mys3ql::Conductor.run params

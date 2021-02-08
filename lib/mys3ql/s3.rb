@@ -26,9 +26,15 @@ module Mys3ql
       end
     end
 
-    def each_bin_log(&block)
+    def each_bin_log(after = nil, &block)
+      if after && after !~ /^\d{6}$/
+        puts 'Binary log file number must be 6 digits.'
+        exit 1
+      end
+
       bucket.objects(prefix: bin_logs_prefix)
             .sort_by { |file| file.key[/\d+/].to_i }
+            .select  { |file| after.nil? || (file.key[/\d+/].to_i > after.to_i) }
             .each do |file|
         yield file
       end
