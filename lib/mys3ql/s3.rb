@@ -1,5 +1,5 @@
 require 'mys3ql/shell'
-require 'awd-sdk-s3'
+require 'aws-sdk-s3'
 
 module Mys3ql
   class S3
