@@ -18,6 +18,10 @@ module Mys3ql
       @s3 = S3.new @config
     end
 
+    # Dumps the database and uploads it to S3.
+    # Copies the uploaded file to the key :latest.
+    # Deletes binary logs from the file system.
+    # Deletes binary logs from S3.
     def full
       @mysql.dump
       @s3.store @mysql.dump_file
@@ -25,13 +29,18 @@ module Mys3ql
       @s3.delete_bin_logs
     end
 
+    # Uploads mysql's binary logs to S3.
+    # The binary logs are left on the file system.
+    # Log files already on S3 are not re-uploaded.
     def incremental
       @mysql.each_bin_log do |log|
         @s3.store log, false
       end
     end
 
-    # for now only restore from latest
+    # Downloads the latest dump from S3 and loads it into the database.
+    # Downloads each binary log from S3 and loads it into the database.
+    # Downloaded files are removed from the file system.
     def restore
       # get latest dump
       with_temp_file do |file|
@@ -48,7 +57,7 @@ module Mys3ql
       end
 
       # NOTE: not sure about this:
-      puts "You might want to flush mysql's logs..."
+      # puts "You might want to flush mysql's logs..."
     end
 
     def debug=(val)
