@@ -52,7 +52,7 @@ module Mys3ql
 
     def save(local_file_name, s3_key)
       if bucket.object(s3_key).exists?
-        log "s3: skipped #{local_file_name} - #{s3_key} exists"
+        log "s3: skipped #{local_file_name} - already exists"
         return
       end
 
