@@ -11,8 +11,6 @@ Gem::Specification.new do |s|
   s.summary     = 'Simple backup of your MySql database onto Amazon S3.'
   s.description = s.summary
 
-  s.rubyforge_project = "mys3ql"
-
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
