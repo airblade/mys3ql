@@ -4,32 +4,25 @@ lib_dir = File.join(File.dirname(__FILE__), '..', 'lib')
 $LOAD_PATH.unshift lib_dir if File.directory?(lib_dir)
 
 require 'mys3ql'
-require 'main'
+require 'optparse'
 
-Main do
-  # consider using modes as/when we need command-specific arguments (e.g. restore specific backup)
-  argument 'command' do
-    validate { |command| %w[ full incremental restore ].include? command }
-    description 'specifies the operation to perform [full | incremental | restore]'
-  end
+params = {}
+op = OptionParser.new do |opts|
+  opts.banner = 'Usage: mys3ql <full|incremental|restore> <[args]>'
 
-  option 'config', 'c' do
-    argument :required
-    description 'load configuration from YAML file'
-    defaults '~/.mys3ql'
-  end
-
-  option 'debug', 'd' do
-    description 'be verbose'
-  end
-
-  option 'version', 'v'
-
-  def run
-    if params[:version].given?
-      puts "mys3ql v#{Mys3ql::VERSION}"
-      exit
-    end
-    Mys3ql::Conductor.run params[:command].value, params[:config].value, params[:debug].given?
+  opts.on '-c', '--config CONFIG', 'Load configuration from YAML file (default ~/.mys3ql)'
+  opts.on_tail '-d', '--debug', 'Be verbose'
+  opts.on_tail '-v', '--version', 'Print version' do
+    puts "mys3ql v#{Mys3ql::VERSION}"
+    exit
   end
 end
+op.parse!(into: params)
+
+params[:command] = ARGV[0]
+unless %w[full incremental restore].include? params[:command]
+  puts op.help
+  exit 1
+end
+
+Mys3ql::Conductor.run params[:command], params[:config], params[:debug]
