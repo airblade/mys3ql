@@ -2,6 +2,8 @@
 
 Simple backup of your MySQL database onto Amazon S3.
 
+See [Example: mysqldump + mysqlbinlog for Backup and Restore](https://dev.mysql.com/doc/refman/5.7/en/mysqlbinlog-backup.html#mysqlbinlog-backup-example).
+
 
 ## Quick start
 
@@ -79,20 +81,8 @@ N.B. the binary logs contain updates to all the databases on the server.  This m
 Marc-André Cournoyer's [mysql_s3_backup](https://github.com/macournoyer/mysql_s3_backup).
 
 
-## To Do
-
-- tests ;)
-- remove old dump files (s3)
-- (restore from non-latest dump)
-
-
-## Questions, Problems, Feedback
-
-Please use the GitHub [issue tracker](https://github.com/airblade/mys3ql/issues) or email me.
-
-
 ## Intellectual property
 
-Copyright 2011 Andy Stewart (boss@airbladesoftware.com).
+Copyright 2011-2021 Andy Stewart (boss@airbladesoftware.com).
 
 Released under the MIT licence.
