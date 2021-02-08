@@ -13,6 +13,8 @@ module Mys3ql
     #
 
     def dump
+      # --master-data=2         include the current binary log coordinates in the log file
+      # --delete-master-logs    delete binary log files
       cmd  = "#{@config.bin_path}mysqldump"
       cmd += ' --quick --single-transaction --create-options --no-tablespaces'
       cmd += ' --flush-logs --master-data=2 --delete-master-logs' if binary_logging?
@@ -36,14 +38,18 @@ module Mys3ql
 
     # flushes logs, yields each bar the last to the block
     def each_bin_log(&block)
+      # FLUSH LOGS    Closes and reopens any log file, including binary logs,
+      #               to which the server is writing.  For binary logs, the sequence
+      #               number of the binary log file is incremented by one relative to
+      #               the previous file.
+      #               https://dev.mysql.com/doc/refman/5.7/en/flush.html#flush-logs
+      #               https://dev.mysql.com/doc/refman/5.7/en/flush.html#flush-binary-logs
       execute 'flush logs'
       logs = Dir.glob("#{@config.bin_log}.[0-9]*").sort_by { |f| f[/\d+/].to_i }
-      logs_to_backup = logs[0..-2]  # all logs except the last, which is in use
+      logs_to_backup = logs[0..-2]  # all logs except the last, which is newly created
       logs_to_backup.each do |log_file|
         yield log_file
       end
-      # delete binlogs from file system
-      #execute "purge master logs to '#{File.basename(logs[-1])}'"
     end
 
     #
