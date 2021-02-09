@@ -14,7 +14,7 @@ module Mys3ql
       s3_file = save file, key
       if dump && s3_file
         copy_key = key_for :latest
-        s3_file.copy_to bucket: @config.bucket, key: copy_key
+        s3_file.copy_to bucket: bucket_name, key: copy_key
         log "s3: copied #{key} to #{copy_key}"
       end
     end
@@ -50,7 +50,7 @@ module Mys3ql
     def get(s3_key, local_file_name)
       s3.get_object(
         response_target: local_file_name,
-        bucket:          @config.bucket,
+        bucket:          bucket_name,
         key:             s3_key
       )
       log "s3: pulled #{s3_key} to #{local_file_name}"
@@ -95,9 +95,9 @@ module Mys3ql
 
     def bucket
       @bucket ||= begin
-        b = Aws::S3::Bucket.new @config.bucket, client: s3
-        raise "S3 bucket #{@config.bucket} not found" unless b.exists?
-        log "s3: opened bucket #{@config.bucket}"
+        b = Aws::S3::Bucket.new bucket_name, client: s3
+        raise "S3 bucket #{bucket_name} not found" unless b.exists?
+        log "s3: opened bucket #{bucket_name}"
         b
       end
     end
