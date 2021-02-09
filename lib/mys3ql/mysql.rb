@@ -45,9 +45,10 @@ module Mys3ql
       #               https://dev.mysql.com/doc/refman/5.7/en/flush.html#flush-logs
       #               https://dev.mysql.com/doc/refman/5.7/en/flush.html#flush-binary-logs
       execute 'flush logs'
-      logs = Dir.glob("#{@config.bin_log}.[0-9]*").sort_by { |f| f[/\d+/].to_i }
-      logs_to_backup = logs[0..-2]  # all logs except the last, which is newly created
-      logs_to_backup.each do |log_file|
+      Dir.glob("#{@config.bin_log}.[0-9]*")
+         .sort_by { |f| f[/\d+/].to_i }
+         .slice(0..-2)  # all logs except the last, which is newly created
+         .each do |log_file|
         yield log_file
       end
     end
