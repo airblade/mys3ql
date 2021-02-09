@@ -111,9 +111,5 @@ module Mys3ql
     def bin_logs_prefix
       "#{@config.database}/bin_logs"
     end
-
-    def bin_logs_exist?
-      @config.bin_log && @config.bin_log.length > 0 && File.exist?(@config.bin_log)
-    end
   end
 end
