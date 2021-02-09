@@ -14,7 +14,7 @@ module Mys3ql
       s3_file = save file, key
       if dump && s3_file
         copy_key = key_for :latest
-        s3_file.copy_to key: copy_key
+        s3_file.copy_to bucket: @config.bucket, key: copy_key
         log "s3: copied #{key} to #{copy_key}"
       end
     end
@@ -100,6 +100,10 @@ module Mys3ql
         log "s3: opened bucket #{@config.bucket}"
         b
       end
+    end
+
+    def bucket_name
+      @config.bucket
     end
 
     def dumps_prefix
