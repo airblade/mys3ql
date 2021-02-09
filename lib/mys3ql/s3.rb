@@ -88,7 +88,6 @@ module Mys3ql
           access_key_id:     @config.access_key_id,
           region:            @config.region
         )
-        log 's3: connected'
         client
       end
     end
@@ -97,7 +96,6 @@ module Mys3ql
       @bucket ||= begin
         b = Aws::S3::Bucket.new bucket_name, client: s3
         raise "S3 bucket #{bucket_name} not found" unless b.exists?
-        log "s3: opened bucket #{bucket_name}"
         b
       end
     end
