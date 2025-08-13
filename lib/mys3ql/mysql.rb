@@ -65,6 +65,7 @@ module Mys3ql
       cmd  = "#{@config.bin_path}mysqlbinlog --database=#{@config.database} #{files.join ' '}"
       cmd += " | #{@config.bin_path}mysql -u'#{@config.user}'"
       cmd += " -p'#{@config.password}'" if @config.password
+      cmd += " -h #{@config.host}" if @config.host
       run cmd
     end
 
