@@ -31,6 +31,10 @@ module Mys3ql
       mysql['user']
     end
 
+    def host
+      mysql['host']
+    end
+
     def password
       mysql['password']
     end

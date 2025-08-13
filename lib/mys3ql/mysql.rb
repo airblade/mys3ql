@@ -81,6 +81,7 @@ module Mys3ql
     def cli_options
       cmd  = " -u'#{@config.user}'"
       cmd += " -p'#{@config.password}'" if @config.password
+      cmd += " -h #{@config.host}" if @config.host
       cmd += " #{@config.database}"
     end
 
