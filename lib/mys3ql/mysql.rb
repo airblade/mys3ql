@@ -62,9 +62,6 @@ module Mys3ql
     end
 
     def apply_bin_logs(*files)
-      log("files: #{files.inspect}")
-      log("files.empty?: #{files.empty?}")
-
       return if files.empty?
       cmd  = "#{@config.bin_path}mysqlbinlog --database=#{@config.database} #{files.join ' '}"
       cmd += " | #{@config.bin_path}mysql -u'#{@config.user}'"
