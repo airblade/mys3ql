@@ -61,7 +61,8 @@ module Mys3ql
       run "gunzip -c #{file} | #{@config.bin_path}mysql #{cli_options}"
     end
 
-    def apply_bin_logs(*files)
+    # files - array
+    def apply_bin_logs(files)
       return if files.empty?
       cmd  = "#{@config.bin_path}mysqlbinlog --database=#{@config.database} #{files.join ' '}"
       cmd += " | #{@config.bin_path}mysql -u'#{@config.user}'"
